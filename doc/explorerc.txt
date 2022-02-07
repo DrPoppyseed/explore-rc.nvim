@@ -1,0 +1,65 @@
+explorerc.txt explorerc
+
+explorerc - TABLE OF CONTENTS                                         *exlorerc*
+==============================================================================
+
+  Installation                                  |explorerc-installation|
+  Introduction                                  |explorerc-introduction|
+  :ExploreRC                                    |:ExploreRC|
+  License                                       |explorerc-license|
+
+INSTALLATION                                            *explorerc-installation*
+==============================================================================
+
+Install explorerc with any of the popular plugin managers like {vim-plug}{1} and 
+{Vundle}{2}. 
+>
+    Plug 'DrPoppyseed/explorerc'
+<
+
+                                      {1} https://github.com/junegunn/vim-plug
+                                   {2} https://github.com/VundleVim/Vundle.vim
+
+
+INTRODUCTION                                            *explorerc-introduction*
+==============================================================================
+
+Do you have a large vimrc file? Do you wish there was some kind of shared 
+framework when it came to rc files? Well, I propose my take on addressing this  
+problem: document and see your rc files with {javadoc}{3}-like syntax.
+
+>
+    " @plugin coc.nvim
+    " @what Use K to show documentation in preview window 
+    nnoremap <silent> K :call <SID>show_documentation()<CR>
+
+    " @keybindings 'Y'
+    " @what Make 'Y' behave like 'D' or 'C'
+
+    " @g Generic
+    " @comment Use generic flags as well!
+<
+
+{3} https://www.oracle.com/technical-resources/articles/java/javadoc-tool.html
+
+
+:ExploreRC                                                          *:ExploreRC*
+==============================================================================
+
+>
+    " Show a window with the flags and contents of the flags
+    :ExploreRC
+<
+
+
+LICENSE                                                      *explorerc-license*
+==============================================================================
+
+The MIT License (MIT)
+
+Copyright (c) 2022 Haruki Jay Shimada
+
+
+==============================================================================
+vim:tw=78:sw=2:ts=2:ft=help:norl:nowrap:
+
