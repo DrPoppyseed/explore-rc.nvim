@@ -1,10 +1,11 @@
 local utils = require "explorerc.utils"
-local flags = require "explorerc.flags"
+local cnode_cluster = require "explorerc.cnode_cluster"
 
 local M = {} 
 
-local win_id = nil
 local buf = nil
+-- local rc_bufnr = -1
+local rc_win = -1
 
 -- window dimensions 
 local win_width = vim.api.nvim_get_var("explorerc_win_width")
@@ -20,12 +21,31 @@ local function get_y_pos()
   return margin_top
 end
 
+M.cluster_translator = function(cluster) 
+  local flat_cluster = {}
+  for _, cluster_node in pairs(cluster) do
+    flat_cluster[#flat_cluster+1] = cluster_node.parent
+
+    for _, child in pairs(cluster_node.children) do
+      flat_cluster[#flat_cluster+1] = child
+    end
+
+  end
+  return flat_cluster
+end
+
+M.goto_cnode = function()
+  local current_line = vim.api.nvim_get_current_line()
+  local row_number = utils.split(current_line, "|")[1]
+
+  vim.api.nvim_set_current_win(rc_win)
+  vim.api.nvim_command(':' .. row_number+1)
+end
+
 M.create_window = function()
   local ui_stats = vim.api.nvim_list_uis()[1]
   local width = ui_stats.width
   local height = ui_stats.height
-
-  local flags_content = flags.clean_flags(flags.get_raw_flags())
 
   if win_height == "auto" then
     win_height = height - 4
@@ -46,8 +66,15 @@ M.create_window = function()
   local is_valid_file_type = utils.is_valid_file_type(current_filename)
 
   if is_valid_file_type then
-    winId = vim.api.nvim_open_win(buf, true, opts)
-    vim.api.nvim_buf_set_lines(buf, 0, 7, false, flags_content)
+    -- rc_bufnr = vim.api.nvim_get_current_buf()
+    local cluster = cnode_cluster.create_cluster(bufnr)
+    local flat = M.cluster_translator(cluster)
+
+    rc_win = vim.api.nvim_get_current_win()
+    vim.api.nvim_open_win(buf, true, opts)
+    vim.api.nvim_buf_set_lines(buf, 0, 1, false, flat)
+
+    utils.map("n", "<cr>", ":lua require('explorerc').goto_cnode()<cr>")
   else
     print('error: invalid file format')
   end
@@ -69,17 +96,3 @@ M.resize_window = function()
 end
 
 return M
-
---[[
-"" @plugin superman
-"" @comment Thank you!
-superman blah blah blah
-
-
-"" @plugin new extension
-yay!
-
-"" @g Remaps
-
-" @plugin Hello
-]]
