@@ -21,19 +21,6 @@ local function get_y_pos()
   return margin_top
 end
 
-M.cluster_translator = function(cluster) 
-  local flat_cluster = {}
-  for _, cluster_node in pairs(cluster) do
-    flat_cluster[#flat_cluster+1] = cluster_node.parent
-
-    for _, child in pairs(cluster_node.children) do
-      flat_cluster[#flat_cluster+1] = child
-    end
-
-  end
-  return flat_cluster
-end
-
 M.goto_cnode = function()
   local current_line = vim.api.nvim_get_current_line()
   local row_number = utils.split(current_line, "|")[1]
@@ -68,7 +55,9 @@ M.create_window = function()
   if is_valid_file_type then
     -- rc_bufnr = vim.api.nvim_get_current_buf()
     local cluster = cnode_cluster.create_cluster(bufnr)
-    local flat = M.cluster_translator(cluster)
+    local flat = cnode_cluster.cluster_formatter(cluster, win_width)
+
+    print(vim.inspect(flat))
 
     rc_win = vim.api.nvim_get_current_win()
     vim.api.nvim_open_win(buf, true, opts)

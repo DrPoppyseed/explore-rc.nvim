@@ -69,12 +69,32 @@ M.cnode_icon = function(tag)
   end
 end
 
-M.format_label_parent = function(cnode)
-  return utils.leading_zeros(cnode.row1) .. '|' .. cnode.icon .. ' ' .. cnode.tag_desc
+local get_leading_spaces = function (depth) 
+  local leading_spaces = ''
+  for _ = 2, depth do 
+    leading_spaces = leading_spaces .. "  " 
+  end
+  return leading_spaces
 end
 
-M.format_label_child = function(cnode)
-  return utils.leading_zeros(cnode.row1) .. '|∟' .. cnode.icon .. ' ' .. cnode.tag_desc
+local get_leader = function (depth)
+  return get_leading_spaces(depth)
+end
+
+local format_w_leading_zeros = function(num)
+  return string.format("%03d", tonumber(num, 10))
+end
+
+-- only show a substring of length of window as description (no wrapping)
+M.format_label = function(cnode, index, width)
+  local line = format_w_leading_zeros(cnode.row1)
+
+  local depth = index > 1 and 2 or 1
+  local separator = '|' .. get_leader(depth) 
+
+  local desc = string.sub(cnode.tag_desc, 0, width)
+
+  return line .. separator .. cnode.icon .. ' ' .. cnode.tag_desc
 end
 
 return M
