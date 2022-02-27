@@ -18,10 +18,8 @@ M.create_cluster = function(current_bufnr)
   for _, node in query:iter_captures(root, current_bufnr) do
     local text = ts_utils.get_node_text(node, bufnr)[1]
     local row1, col1, row2, col2 = node:range()
-    if string.find(text, '@') then 
-      local parsed_cnode = c.parse_cnode(text, col1, col2, row1, row2)
-      cnodes[#cnodes+1]=parsed_cnode
-    end
+    local parsed_cnode = c.parse_cnode(text, col1, col2, row1, row2)
+    cnodes[#cnodes+1]=parsed_cnode
   end
 
   for index, cnode in pairs(cnodes) do
