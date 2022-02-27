@@ -24,6 +24,11 @@ function! ExploreRC()
   lua require('explorerc').create_window()
 endfunction
 
+" function! OnRCClose()
+"   lua 
+" endfunction
+
 augroup ExploreRC
   autocmd!
+  autocmd BufHidden * lua require('explorerc').on_rc_close()
 augroup END
