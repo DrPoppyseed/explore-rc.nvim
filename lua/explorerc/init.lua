@@ -49,11 +49,15 @@ M.create_window = function()
     style="minimal"
   }
 
+<<<<<<< Updated upstream
   local current_filename = vim.fn.expand('%')
   local is_valid_file_type = utils.is_valid_file_type(current_filename)
 
   if is_valid_file_type then
     -- rc_bufnr = vim.api.nvim_get_current_buf()
+=======
+  if utils.is_valid_file_type(vim.fn.expand('%')) then
+>>>>>>> Stashed changes
     local cluster = cnode_cluster.create_cluster(bufnr)
     local flat = cnode_cluster.cluster_formatter(cluster, win_width)
 
