@@ -33,16 +33,9 @@ M.parse_cnode = function(str, col1, col2, row1, row2)
 
     return parsed_cnode
   else
-    -- handle normal strings without "@" delimiters
     local split_raw_str = utils.split(str, ' ')
     local tag = cnode_tags['generic']
-    local tag_desc = ''
-
-    if utils.len(split_raw_str) ~= 1 then
-      tag_desc = split_raw_str[2]
-    else 
-      tag_desc = split_raw_str[1]
-    end
+    local tag_desc = table.concat(utils.slice(split_raw_str, 2, utils.len(split_raw_str)), " ")
 
     local parsed_cnode = M.cnode_factory(tag, tag_desc, col1, col2, row1, row2)
 
@@ -86,16 +79,27 @@ local format_w_leading_zeros = function(num)
   return string.format("%03d", tonumber(num, 10))
 end
 
+local get_formatted_desc = function (raw_desc, width, leader_len)
+  local available_width = width - leader_len
+
+  if (string.len(raw_desc) > available_width) then
+    return string.sub(raw_desc, 0, available_width - 2) .. '...'
+  else 
+    return string.sub(raw_desc, 0, available_width)
+  end
+end
+
 -- only show a substring of length of window as description (no wrapping)
 M.format_label = function(cnode, index, width)
   local line = format_w_leading_zeros(cnode.row1)
 
-  local depth = index > 1 and 2 or 1
-  local separator = '|' .. get_leader(depth) 
+  local separator = '|' .. get_leader(index > 1 and 2 or 1) 
 
-  local desc = string.sub(cnode.tag_desc, 0, width)
+  local leader = line .. separator .. cnode.icon .. ' '
 
-  return line .. separator .. cnode.icon .. ' ' .. cnode.tag_desc
+  local desc = get_formatted_desc(cnode.tag_desc, width, string.len(leader))
+
+  return leader .. desc
 end
 
 return M
