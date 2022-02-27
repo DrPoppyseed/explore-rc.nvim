@@ -33,6 +33,7 @@ M.parse_cnode = function(str, col1, col2, row1, row2)
 
     return parsed_cnode
   else
+    -- handle normal strings without "@" delimiters
     local split_raw_str = utils.split(str, ' ')
     local tag = cnode_tags['generic']
     local tag_desc = ''
