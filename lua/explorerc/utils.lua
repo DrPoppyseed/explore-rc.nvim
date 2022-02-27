@@ -88,6 +88,18 @@ M.is_valid_file_type = function(filename)
   return string.match(tail, 'rc$')
 end
 
+M.slice = function(array, start, limit) 
+  local sliced = {}
+  local position = 1
+  
+  for i = start, limit do
+    sliced[position] = array[i]
+    position = position + 1
+  end
+
+  return sliced
+end
+
 M.len = function(table)
   local count = 0
   for _ in pairs(table) do
@@ -102,10 +114,6 @@ M.map = function(mode, lhs, rhs, opts)
     options = vim.tbl_extend("force", options, opts)
   end
   vim.api.nvim_set_keymap(mode, lhs, rhs, options)
-end
-
-M.leading_zeros = function(num)
-  return string.format("%03d", tonumber(num, 10))
 end
 
 return M
