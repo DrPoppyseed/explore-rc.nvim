@@ -11,6 +11,6 @@ Think of it like javadocs, but for rc files!
 - [ ] html output support (like in javadocs)
 - [ ] ? reordering chunks from the UI  
 - [ ] fzf-like search for flags/tags/comments
-- [ ] tree-like hiearchical commenting structure w/ folding 
+- [x] tree-like hiearchical commenting structure w/ folding 
 
 
