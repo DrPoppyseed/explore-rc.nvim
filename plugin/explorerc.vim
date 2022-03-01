@@ -26,5 +26,7 @@ endfunction
 
 augroup ExploreRC
   autocmd!
-  autocmd BufHidden * lua require('explorerc').on_rc_close()
+  autocmd WinClosed * lua require('explorerc').on_close()
+  autocmd CursorMoved * lua require('explorerc').on_cursor_move()
+  autocmd WinScrolled * lua require('explorerc').on_scroll()
 augroup END

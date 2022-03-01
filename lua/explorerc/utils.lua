@@ -1,10 +1,12 @@
+local a = vim.api
+
 local M = {}
 
 -- code gist from https://gist.github.com/qizhihere/cb2a14432d9bf65693ad
 -- STARTS HERE {{{
 local function table_clone_internal(t, copies)
   if type(t) ~= "table" then return t end
-  
+
   copies = copies or {}
   if copies[t] then return copies[t] end
 
@@ -67,7 +69,7 @@ M.split = function(s, delimiter)
 end
 
 M.center_text = function(str)
-  local width = vim.api.nvim_win_get_width(0)
+  local width = a.nvim_win_get_width(0)
   local shift = math.floor(width / 2) - math.floor(string.len(str) / 2)
   return string.rep(' ', shift) .. str
 end
@@ -91,7 +93,7 @@ end
 M.slice = function(array, start, limit) 
   local sliced = {}
   local position = 1
-  
+
   for i = start, limit do
     sliced[position] = array[i]
     position = position + 1
@@ -113,7 +115,7 @@ M.map = function(mode, lhs, rhs, opts)
   if opts then
     options = vim.tbl_extend("force", options, opts)
   end
-  vim.api.nvim_set_keymap(mode, lhs, rhs, options)
+  a.nvim_set_keymap(mode, lhs, rhs, options)
 end
 
 return M

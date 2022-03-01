@@ -1,6 +1,6 @@
-local utils = require "explorerc.utils"
+local u = require "explorerc.utils"
 
-local M = {}
+local cnode = {}
 
 local cnode_tags = {
   ['keybindings'] = 'keybindings',
@@ -22,32 +22,32 @@ local cnode_icons = {
   [cnode_tags['generic']] = ''
 }
 
-M.parse_cnode = function(str, col1, col2, row1, row2)
-  local split_str = utils.split(str, '@')
+cnode.parse_cnode = function(str, col1, col2, row1, row2)
+  local split_str = u.split(str, '@')
 
-  if utils.len(split_str) ~= 1 then
-    local post_delimiter_str = utils.split(split_str[2], " ")
+  if u.len(split_str) ~= 1 then
+    local post_delimiter_str = u.split(split_str[2], " ")
     local tag = post_delimiter_str[1]
     local tag_desc = post_delimiter_str[2]
-    local parsed_cnode = M.cnode_factory(tag, tag_desc, col1, col2, row1, row2)
+    local parsed_cnode = cnode.cnode_factory(tag, tag_desc, col1, col2, row1, row2)
 
     return parsed_cnode
   else
-    local split_raw_str = utils.split(str, ' ')
+    local split_raw_str = u.split(str, ' ')
     local tag = cnode_tags['generic']
-    local tag_desc = table.concat(utils.slice(split_raw_str, 2, utils.len(split_raw_str)), " ")
+    local tag_desc = table.concat(u.slice(split_raw_str, 2, u.len(split_raw_str)), " ")
 
-    local parsed_cnode = M.cnode_factory(tag, tag_desc, col1, col2, row1, row2)
+    local parsed_cnode = cnode.cnode_factory(tag, tag_desc, col1, col2, row1, row2)
 
     return parsed_cnode
   end
 end
 
-M.cnode_factory = function(tag, tag_desc, col1, col2, row1, row2)
+cnode.cnode_factory = function(tag, tag_desc, col1, col2, row1, row2)
   return {
     ['tag'] = tag,
     ['tag_desc'] = tag_desc,
-    ['icon'] = M.cnode_icon(tag),
+    ['icon'] = cnode.cnode_icon(tag),
     ['col1'] = col1,
     ['col2'] = col2,
     ['row1'] = row1,
@@ -55,7 +55,7 @@ M.cnode_factory = function(tag, tag_desc, col1, col2, row1, row2)
   }
 end
 
-M.cnode_icon = function(tag)
+cnode.cnode_icon = function(tag)
   if cnode_icons[tag] == nil then
     return ''
   else
@@ -90,16 +90,16 @@ local get_formatted_desc = function (raw_desc, width, leader_len)
 end
 
 -- only show a substring of length of window as description (no wrapping)
-M.format_label = function(cnode, index, width)
-  local line = format_w_leading_zeros(cnode.row1)
+cnode.format_label = function(_cnode, index, width)
+  local line = format_w_leading_zeros(_cnode.row1)
 
   local separator = '|' .. get_leader(index > 1 and 2 or 1) 
 
-  local leader = line .. separator .. cnode.icon .. ' '
+  local leader = line .. separator .. _cnode.icon .. ' '
 
-  local desc = get_formatted_desc(cnode.tag_desc, width, string.len(leader))
+  local desc = get_formatted_desc(_cnode.tag_desc, width, string.len(leader))
 
   return leader .. desc
 end
 
-return M
+return cnode

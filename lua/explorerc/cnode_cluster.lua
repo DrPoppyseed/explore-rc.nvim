@@ -1,22 +1,22 @@
-local ts_utils = require "nvim-treesitter.ts_utils"
+local tsu = require "nvim-treesitter.ts_utils"
+local ts = vim.treesitter
 local c = require "explorerc.cnode"
 
-local M = {}
+local cnode_cluster = {}
 
-M.create_cluster = function(current_bufnr)
+cnode_cluster.create_cluster = function(current_bufnr)
   local cnodes = {}
   local cluster = {}
-  local language_tree = vim.treesitter.get_parser(current_bufnr, 'vim')
+  local language_tree = ts.get_parser(current_bufnr, 'vim')
   local syntax_tree = language_tree:parse()
   local root = syntax_tree[1]:root()
 
-  local query = vim.treesitter.parse_query('vim', [[
+  local query = ts.parse_query('vim', [[
     (comment) @comment
   ]])
 
-  -- TODO: use an actual algorithm
   for _, node in query:iter_captures(root, current_bufnr) do
-    local text = ts_utils.get_node_text(node, bufnr)[1]
+    local text = tsu.get_node_text(node, bufnr)[1]
     local row1, col1, row2, col2 = node:range()
     local parsed_cnode = c.parse_cnode(text, col1, col2, row1, row2)
     cnodes[#cnodes+1]=parsed_cnode
@@ -24,7 +24,7 @@ M.create_cluster = function(current_bufnr)
 
   for index, cnode in pairs(cnodes) do
     if index == 1 then
-      cluster[#cluster+1] = M.cluster_node_factory(cnode)
+      cluster[#cluster+1] = cnode_cluster.cluster_node_factory(cnode)
     elseif cnode.row1-1 == cluster[#cluster].range_end then
       local cluster_cnodes = cluster[#cluster].cnodes
       cluster_cnodes[#cluster_cnodes+1] = cnode
@@ -34,14 +34,14 @@ M.create_cluster = function(current_bufnr)
         ['range_end'] = cnode['row2'],
       }
     else
-      cluster[#cluster+1] = M.cluster_node_factory(cnode)
+      cluster[#cluster+1] = cnode_cluster.cluster_node_factory(cnode)
     end
   end
 
   return cluster
 end
 
-M.cluster_node_factory = function(cnode)
+cnode_cluster.cluster_node_factory = function(cnode)
   return {
     ['cnodes'] = {cnode},
     ['range_start'] = cnode.row1,
@@ -49,7 +49,7 @@ M.cluster_node_factory = function(cnode)
   }
 end
 
-M.cluster_formatter = function(cluster, width) 
+cnode_cluster.cluster_formatter = function(cluster, width) 
   local flat_cluster = {}
   for _, cluster_node in pairs(cluster) do
     for index, cnode in pairs(cluster_node.cnodes) do 
@@ -60,4 +60,4 @@ M.cluster_formatter = function(cluster, width)
 end
 
 
-return M
+return cnode_cluster
